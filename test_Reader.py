@@ -13,12 +13,25 @@ class Test_test_Reader(unittest.TestCase):
 		a_reader = Reader("./example_input.py")
 		a_reader.analyze()
 		a_reader.ausgabe()
+		self.assertEquals(len(a_reader.listOfSets), 5)
+		for index in range(len(a_reader.listOfSets)):
+			propset = a_reader.listOfSets[index]
+			if (index == 0):
+				self.assertEquals(len(propset.properties), 5)
+			else:
+				self.assertEquals(len(propset.properties), 4)
+
 		
 	def test_reader_allow_incomplete_on(self):
                 a_reader = Reader("./example_input.py")
 		a_reader.allowIncompleteProperties(1)
                 a_reader.analyze()
-		a_reader.ausgabe()		
+		a_reader.ausgabe()
+		self.assertEquals(len(a_reader.listOfSets), 5)
+		for index in range(len(a_reader.listOfSets)):
+                        propset = a_reader.listOfSets[index]
+                        self.assertEquals(len(propset.properties), 5)
+
 		
 	
 if __name__ == '__main__':
