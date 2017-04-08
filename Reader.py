@@ -39,14 +39,14 @@ class Reader(object):
 					valuepart = partclean[m.start():]
 					valuesplitter = re.compile(Reader.RGX_SPLIT_PROPS)
 					for n in valuesplitter.finditer(valuepart):
+						print n.group(1)
 						kvp = self.__readKeyValue(n.group(1))
 					        props = factory.createProps(kvp)
 						if (props is not None and 0 < len(props)):
 							propSet.properties.append(props)
-							for prop in props:
-								print("Property added: ",prop)
 						else:
 							print("Properties incomplete, not attached to PropertySet", propSet)
+					self.listOfSets.append(propSet)
 		else:
 			print "Text null or empty"	
 
@@ -89,5 +89,6 @@ class Reader(object):
 		 self.__readFile()
 
 	def ausgabe(self):
-		print "Data structure"
-		return self.path
+		print "--- Data structure ---"
+		for propset in self.listOfSets:
+			print propset

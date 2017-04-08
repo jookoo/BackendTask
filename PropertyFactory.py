@@ -11,7 +11,7 @@ class PropertyFactory(object):
                 if("name" in keyValues and "type" in keyValues):
                         name = self.__readValue(keyValues,"name")
                         type = self.__readValue(keyValues,"type")
-                        if (type == "PropertySet" and name is not None):
+                        if (type == PropertySet.DEFAULT_TYPE and self.__checkIsNotEmpty(name)):
                                 a_propertySet = PropertySet(name)
                         else:
                                 print("Fail: ", name," Set-Data ignored")
@@ -25,7 +25,7 @@ class PropertyFactory(object):
                         name = self.__readValue(keyValues,"name")
                         value = self.__readValue(keyValues,"value")
                         type = self.__readValue(keyValues,"type")
-                        if (self.allowIncomplete == 1 or (type == "Property" and self.__checkIsEmpty(name) and self.__checkIsEmpty(value))):
+                        if (self.allowIncomplete == 1 or (type == Property.DEFAULT_TYPE and self.__checkIsNotEmpty(name) and self.__checkIsNotEmpty(value))):
                                 x.append(Property(name, value))
                         else:
                                 print("Fail: ", name," Property-Data ignored")
@@ -37,6 +37,11 @@ class PropertyFactory(object):
 		if (value is None or value == ""):
 			return 1
 		return 0
+
+	def __checkIsNotEmpty(self, value):
+		if(self.__checkIsEmpty(value)):
+			return 0
+		return 1
 
 	def __readValue(self, keyValues, key):
 		if (key in keyValues):

@@ -11,8 +11,11 @@ class PropertySet(object):
 		self.name = name
 		self.properties = []
 	
-	def __str__(self):
-		return "Type:" + self.type +  " Name:" +  self.name +  " Props:" + len(self.properties)
+	def __repr__(self):
+		x = "Type:" + self.type +  " Name:" +  self.name +  " Props:" + str(len(self.properties))
+		for prop in self.properties:
+			x = x + "\n" + str(prop)
+		return x
 
 
 class Property(object):
@@ -26,6 +29,6 @@ class Property(object):
 		self.name = name
 		self.value = value
 
-	def __str__(self):
-                return "Type:" + self.type + " Name:" + self.name
+	def __repr__(self):
+                return "Type:" + self.type + " Name:" + self.name + " Value:" + str(self.value)
 
