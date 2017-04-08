@@ -13,12 +13,12 @@ class Reader(object):
 
 	RGX_KEY_VALUE = "(\"(\w+)\":\s*(\"[a-zA-Z0-9 ]+\"|\d+.{0,1}\d+))"
 
-	ALLOW_INCOMPLETE_PROP_SETS = 1 
+	DEFAULT_ALLOW_INCOMPLETE_PROP_SETS = 0 
 	
 	def __init__(self, path):
 		self.path = path
 		self.listOfSets = []
-		self.factory = PropertyFactory(Reader.ALLOW_INCOMPLETE_PROP_SETS);
+		self.allowIncomplete = Reader.DEFAULT_ALLOW_INCOMPLETE_PROP_SETS;
 
 	def __readLine(self, part):
 		partclean = part.strip()
@@ -28,20 +28,23 @@ class Reader(object):
 
 	def __readListOrKeyValue(self, part):
 		if (self.__notNoneOrEmpty(part)):
+			factory = PropertyFactory(self.allowIncomplete);
 			partclean = part.strip()
 			basicsplitter = re.compile(Reader.RGX_SPLIT_SET_FROM_PROPS)
 			for m in basicsplitter.finditer(partclean):
 				setpart = partclean[:m.start()]
 				kvs = self.__readKeyValue(setpart)
-				propSet = self.factory.createSet(kvs)
+				propSet = factory.createSet(kvs)
 				if (propSet is not None):
 					valuepart = partclean[m.start():]
 					valuesplitter = re.compile(Reader.RGX_SPLIT_PROPS)
 					for n in valuesplitter.finditer(valuepart):
 						kvp = self.__readKeyValue(n.group(1))
-					        props = self.factory.createProps(kvp)
+					        props = factory.createProps(kvp)
 						if (props is not None and 0 < len(props)):
 							propSet.properties.append(props)
+							for prop in props:
+								print("Property added: ",prop)
 						else:
 							print("Properties incomplete, not attached to PropertySet", propSet)
 		else:
@@ -77,6 +80,14 @@ class Reader(object):
 			return True
 		return False
 
+	def allowIncompleteProperties(self, value):
+		if (value is not None):
+			self.allowIncomplete = value
+			print ("Incomplete Property Sets allowed = ",value)
+
+	def analyze(self):
+		 self.__readFile()
+
 	def ausgabe(self):
-		self.__readFile()
+		print "Data structure"
 		return self.path

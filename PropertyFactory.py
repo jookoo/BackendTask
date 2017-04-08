@@ -35,8 +35,8 @@ class PropertyFactory(object):
 
 	def __checkIsEmpty(self, value):
 		if (value is None or value == ""):
-			return true
-		return false
+			return 1
+		return 0
 
 	def __readValue(self, keyValues, key):
 		if (key in keyValues):
