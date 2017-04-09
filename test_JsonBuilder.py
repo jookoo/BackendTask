@@ -19,23 +19,23 @@ class Test_test_JsonBuilder(unittest.TestCase):
 
 	def test_builder_simpel(self):
                 a_builder = JsonBuilder(0)
-                a_builder.objekt().keyvalue("a_key","a_value").keyvalue("b_key","b_value").close()
+                a_builder.keyvalue("a_key","a_value").keyvalue("b_key","b_value").close()
                 print a_builder.build()
 	
 	def test_builder_pretty_simple(self):
 		a_builder = JsonBuilder(1)
-		a_builder.objekt().keyvalue("a_key","a_value").keyvalue("b_key","b_value").close()
+		a_builder.keyvalue("a_key","a_value").keyvalue("b_key","b_value").close()
 		print a_builder.build()
 
         def test_builder_advanced(self):
                 a_builder = JsonBuilder(0)
-                a_builder.objekt().keyvalue("a_key","a_value").keyvalue("b_key","b_value").list("a_list").keyvalue("a_lkey", "alvalue").closeAll()
+                a_builder.keyvalue("a_key","a_value").keyvalue("b_key","b_value").list("a_list").keyvalue("a_lkey", "alvalue").closeAll()
                 print a_builder.build()
 
 
         def test_builder_pretty_advanced(self):
                 a_builder = JsonBuilder(1)
-                a_builder.objekt().keyvalue("a_key","a_value").keyvalue("b_key","b_value").close()
+                a_builder.keyvalue("a_key","a_value").keyvalue("b_key","b_value").close()
                 print a_builder.build()
 
 if __name__ == '__main__':
