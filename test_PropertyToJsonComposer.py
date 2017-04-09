@@ -41,7 +41,7 @@ class Test_test_PropertyToJsonComposer(unittest.TestCase):
                 listOfSets = []
                 listOfSets.append(property_set)
                 a_composer = PropertySetToJsonComposer()
-                a_composer.doFile(listOfSets, 0)
+                a_composer.doFile(listOfSets, 0, "./demodata/demo.json")
                 #self.assertEquals(a_builder.pretty, 1)
 
 
