@@ -9,7 +9,7 @@ class JsonBuilder(object):
 
 	def objekt(self):
 		if (self.__isNextNeed()):
-                        self.items.append(Next())
+                        self.items.append(Next(0))
 		level = self.__findAndRaiseCurrentLevel()
 		self.items.append(Obj(level))
 		return self
@@ -19,7 +19,8 @@ class JsonBuilder(object):
 			level = self.__findAndRaiseCurrentLevel()
                         self.items.append(Obj(level))
                 if (self.__isNextNeed()):
-                        self.items.append(Next())
+			nxtlevel = self.__findCurrentLevel() - 1
+                        self.items.append(Next(nxtlevel))
 		level = self.__findAndRaiseCurrentLevel()
                 self.items.append(List(key, level))
                 return self
@@ -29,7 +30,7 @@ class JsonBuilder(object):
 			level = self.__findAndRaiseCurrentLevel()
                         self.items.append(Obj(level))
                 if (self.__isNextNeed()):
-                        self.items.append(Next())
+                        self.items.append(Next(0))
 		self.items.append(Value(value))
 
 	def keyvalue(self, key, value):
@@ -37,7 +38,7 @@ class JsonBuilder(object):
 			level = self.__findAndRaiseCurrentLevel()
 			self.items.append(Obj(level))
 		if (self.__isNextNeed()):
-			self.items.append(Next())
+			self.items.append(Next(0))
 		self.items.append(KeyValue(key, value))			
 		return self
 
@@ -101,9 +102,10 @@ class JsonBuilder(object):
                                 	x = x + item.value
 					if (self.pretty):
                                                 x = x + "\n"
-
 				
 				if (isinstance(item, Next)):
+					if (self.pretty):
+                                                x = x + "\t".expandtabs(item.level*JsonBuilder.PRETTY_DIST)
                                         x = x + item.value
 					if (self.pretty):
                                                 x = x + "\n"
@@ -120,7 +122,7 @@ class JsonBuilder(object):
 							else:
 								if (self.pretty):
 									self.level = self.level - 1
-									# Buggy.... noch fixen
+									# Buggy.... noch fixen, reagiert nur auf closeAll am ende
 									if(0 == once and (isinstance(self.items[-2], Value) or isinstance(self.items[-2], KeyValue))):
 										x = x + "\n"
 										once = 1
@@ -194,8 +196,9 @@ class KeyValue(object):
 
 class Next(object):
 
-	def __init__(self):
+	def __init__(self, nxtlevel):
 		self.value = ","
+		self.level = nxtlevel
 
 class Close(object):
 	
