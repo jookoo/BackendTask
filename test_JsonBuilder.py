@@ -29,7 +29,7 @@ class Test_test_JsonBuilder(unittest.TestCase):
 
         def test_builder_advanced(self):
                 a_builder = JsonBuilder(0)
-                a_builder.objekt().keyvalue("a_key","a_value").keyvalue("b_key","b_value").list("a_list").keyvalue("a_lkey", "alvalue").close().close()
+                a_builder.objekt().keyvalue("a_key","a_value").keyvalue("b_key","b_value").list("a_list").keyvalue("a_lkey", "alvalue").closeAll()
                 print a_builder.build()
 
 

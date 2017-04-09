@@ -9,14 +9,18 @@ class JsonBuilder(object):
 		return self
 
 	def keyvalue(self, key, value):
-		if (self.items[-1] is None):
+		if (self.items[-1] is None or isinstance(self.items[-1], List)):
 			self.items.append(Obj())
+		if (isinstance(self.items[-1], KeyValue) or isinstance(self.items[-1], Close)):
+			self.items.append(Next())
 		self.items[-1].items.append(KeyValue(key,value))			
 		return self
 
 	def list(self, key):
 		if (self.items[-1] is None):
                         self.items.append(Obj())
+		 if (isinstance(self.items[-1], KeyValue) or isinstance(self.items[-1], List) or isinstance(self.items[-1], Close)):
+                        self.items.append(Next())
 		self.items.append(List(key))
 		return self
 
@@ -29,6 +33,12 @@ class JsonBuilder(object):
 		else:
 			val = "}"
 		self.items.append(Close(val))
+		return self
+
+	def closeAll(self):
+		if (self.items[-1] is None):
+                       self.items.append(Obj())
+		self.items.append(CloseAll())
 		return self
 	
 	def build(self):
@@ -43,8 +53,6 @@ class JsonBuilder(object):
 							x = x + ","
 							if (self.pretty ==1):
 								x = x + "\n"
-							else:
-								x = x + " "
 						
 						x = x + "\"" +  item.key + "\": ["
 					if (self.pretty == 1):
@@ -52,12 +60,12 @@ class JsonBuilder(object):
 
 					for kv in item.items:
 						if(isinstance(kv, KeyValue)):	
-							x = x + self.__writekv(len(x),kv.key, kv.value)
+							x = x + self.__writekv(len(x), kv.key, kv.value)
 						else:			
 							index = 2			
 							for kvl in kv.items:
 								 print index
-								 x = x + self.__writekv(index,kvl.key, kvl.value)
+								 x = x + self.__writekv(index, kvl.key, kvl.value)
 								 index = index + 1
 
 
@@ -66,6 +74,21 @@ class JsonBuilder(object):
 
 				if (isinstance(item, Close)):
                                 	x = x + item.value
+				
+				if (isinstance(item, Next)):
+                                        x = x + item.value
+
+				if (isinstance(item, CloseAll)):
+					for item in reversed(self.items):
+						if (isinstance(item, Obj) or isinstance(item, List)):
+							if (self.pretty ==1):
+                                                                x = x + "\n"
+
+							if (isinstance(item, Obj)):
+								x = x + "}"
+							else:
+								x = x + "]"
+							
 
 
 		return x
@@ -104,8 +127,17 @@ class List(object):
 		self.key = key
 		self.items = []
 
+class Next(object):
+
+	def __init__(self):
+		self.value = ","
+
 class Close(object):
 	
 	def __init__(self, value):
 		self.value = value
 
+class CloseAll(object):
+
+	def __init__(self):
+		self.nothing = 0
