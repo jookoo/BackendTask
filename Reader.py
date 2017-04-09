@@ -19,6 +19,33 @@ class Reader(object):
 		self.path = path
 		self.listOfSets = []
 		self.allowIncomplete = Reader.DEFAULT_ALLOW_INCOMPLETE_PROP_SETS;
+	
+	def allowIncompleteProperties(self, value):
+                if (value is not None):
+                        self.allowIncomplete = value
+                        print ("Incomplete Property Sets allowed = ",value)
+
+        def analyze(self):
+                 self.__readFile()
+
+	def retrievedata(self):
+		return self.listOfSets
+
+        def printdata(self):
+                print "--- Data structure ---"
+                for propset in self.listOfSets:
+                        print propset
+
+	def __readFile(self):
+                if (os.path.exists(self.path)):
+                        file = open(self.path)
+                        for line in file:
+                            matcher = self.__readLine(line)
+                            if (matcher is not None and 0< len(matcher.groups())):
+                                mline = self.__readListOrKeyValue(matcher.group(1))
+                        file.close()
+                else:
+                        print("File not readable", self.path)
 
 	def __readLine(self, part):
 		partclean = part.strip()
@@ -39,13 +66,12 @@ class Reader(object):
 					valuepart = partclean[m.start():]
 					valuesplitter = re.compile(Reader.RGX_SPLIT_PROPS)
 					for n in valuesplitter.finditer(valuepart):
-						print n.group(1)
 						kvp = self.__readKeyValue(n.group(1))
 					        props = factory.createProps(kvp)
 						if (props is not None and 0 < len(props)):
 							propSet.properties.append(props)
 						else:
-							print("Properties incomplete, not attached to PropertySet", propSet)
+							print("Property incomplete, not attached to PropertySet", propSet)
 					self.listOfSets.append(propSet)
 		else:
 			print "Text null or empty"	
@@ -64,31 +90,7 @@ class Reader(object):
 			print "Text null or empty"
 		return keyValues
 
-	def __readFile(self):
-		if (os.path.exists(self.path)):
-			file = open(self.path)
-			for line in file:
-			    matcher = self.__readLine(line)
-			    if (matcher is not None and 0< len(matcher.groups())):
-				mline = self.__readListOrKeyValue(matcher.group(1))
-	                file.close()
-		else:
-			print("File not readable", self.path)
-
 	def __notNoneOrEmpty(self,part):
 		if (part is not None and 0<len(part) ):
 			return True
 		return False
-
-	def allowIncompleteProperties(self, value):
-		if (value is not None):
-			self.allowIncomplete = value
-			print ("Incomplete Property Sets allowed = ",value)
-
-	def analyze(self):
-		 self.__readFile()
-
-	def ausgabe(self):
-		print "--- Data structure ---"
-		for propset in self.listOfSets:
-			print propset

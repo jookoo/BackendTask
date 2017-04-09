@@ -21,6 +21,7 @@ class PropertyFactory(object):
 
 	def createProps(self, keyValues):
                 x = []
+		print keyValues
                 if(self.allowIncomplete == 1 or ("name" in keyValues and "value" in keyValues and "type" in keyValues)):
                         name = self.__readValue(keyValues,"name")
                         value = self.__readValue(keyValues,"value")
