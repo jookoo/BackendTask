@@ -46,7 +46,7 @@ class JsonBuilder(object):
                 self.items.append(List(key, level))
                 return self
 
-	def value(self):
+	def value(self, value):
 		if (self.__isObjNeed()):
 			if (self.__isNextNeed()):
                                 nxtlevel = self.__findCurrentLevel() - 1
@@ -55,7 +55,7 @@ class JsonBuilder(object):
                         self.items.append(Obj(level))
                 if (self.__isNextNeed()):
                         self.items.append(Next(0))
-		self.items.append(Value(value))
+		self.items.append(KeyValue(None,value))
 		return self
 
 	def keyvalue(self, key, value):
@@ -110,12 +110,9 @@ class JsonBuilder(object):
 				if (isinstance(item, KeyValue)):	
 					if (self.pretty):
                                                 x = x + JsonBuilder.LINE_TAB.expandtabs(self.level*JsonBuilder.PRETTY_DIST)
-					x = x + JsonBuilder.VALUE_TAG + item.key + JsonBuilder.VALUE_TAG + JsonBuilder.VALUE_SEPERATOR + JsonBuilder.SPACE + JsonBuilder.VALUE_TAG + str(item.value) + JsonBuilder.VALUE_TAG
-
-				if (isinstance(item, Value)):
-                                        if (self.pretty):
-                                                x = x + JsonBuilder.LINE_TAB.expandtabs(self.level*JsonBuilder.PRETTY_DIST)
-                                        x = x + JsonBuilder.VALUE_TAG +  str(item.value) + JsonBuilder.VALUE_TAG
+					if (item.key is not None and 0 < len(item.key)):
+						x = x + JsonBuilder.VALUE_TAG + item.key + JsonBuilder.VALUE_TAG + JsonBuilder.VALUE_SEPERATOR + JsonBuilder.SPACE
+					x = x + JsonBuilder.VALUE_TAG + str(item.value) + JsonBuilder.VALUE_TAG
 
 				if (isinstance(item, Close)):
                                         if (self.pretty):
@@ -146,7 +143,7 @@ class JsonBuilder(object):
 		return 0		
 	
 	def __isNextNeed(self):
-		if (0 < len(self.items) and (isinstance(self.items[-1], Value) or isinstance(self.items[-1], KeyValue) or isinstance(self.items[-1], Close))):
+		if (0 < len(self.items) and (isinstance(self.items[-1], KeyValue) or isinstance(self.items[-1], Close))):
 			return 1
 		return 0
 
@@ -204,11 +201,6 @@ class List(object):
 		self.level = level
                 self.key = key
                 self.value = "["
-
-class Value(object):
-	
-	def __init__(self, value):
-		self.value = value
 
 class KeyValue(object):
 	

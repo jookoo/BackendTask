@@ -1,4 +1,5 @@
 import unittest
+import hashlib
 
 from PropertySetToJsonComposer import PropertySetToJsonComposer
 from BackendTask import PropertySet
@@ -27,6 +28,9 @@ class Test_test_PropertyToJsonComposer(unittest.TestCase):
 		listOfSets.append(property_set)
                 a_composer = PropertySetToJsonComposer()
                 a_composer.doPrint(listOfSets, 0)
+		a_composer.doFile(listOfSets, 0, "./demodata/demo_md5.json")
+		actual = hashlib.md5(open("./demodata/demo_md5.json", 'rb').read()).hexdigest()
+                self.assertEquals("5ce5fe11238323764e8d9c81d736310d", actual)
                 #self.assertEquals(a_builder.pretty, 1)
 	
 	def test_composer_doFile_demo_input(self):
@@ -42,6 +46,8 @@ class Test_test_PropertyToJsonComposer(unittest.TestCase):
                 listOfSets.append(property_set)
                 a_composer = PropertySetToJsonComposer()
                 a_composer.doFile(listOfSets, 0, "./demodata/demo.json")
+		actual = hashlib.md5(open("./demodata/demo.json", 'rb').read()).hexdigest()
+                self.assertEquals("5ce5fe11238323764e8d9c81d736310d", actual)
                 #self.assertEquals(a_builder.pretty, 1)
 
 	def test_composer_doFile_demo_input_pretty(self):
@@ -57,6 +63,8 @@ class Test_test_PropertyToJsonComposer(unittest.TestCase):
                 listOfSets.append(property_set)
                 a_composer = PropertySetToJsonComposer()
                 a_composer.doFile(listOfSets, 1, "./demodata/demo_pretty.json")
+		actual = hashlib.md5(open("./demodata/demo_pretty.json", 'rb').read()).hexdigest()
+                self.assertEquals("500fa32457f264fc2e32129b31f7e944", actual)
                 #self.assertEquals(a_builder.pretty, 1)
 
 
