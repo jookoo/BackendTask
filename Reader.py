@@ -1,5 +1,6 @@
 import re
 import os.path
+import sys, getopt
 from BackendTask import PropertySet
 from BackendTask import Property
 from PropertyFactory import PropertyFactory
@@ -14,10 +15,11 @@ class Reader(object):
 	RGX_KEY_VALUE = "(\"(\w+)\":\s*(\"[a-zA-Z0-9 ]+\"|\d+.{0,1}\d+))"
 
 	DEFAULT_ALLOW_INCOMPLETE_PROP_SETS = 0 
-	
+
 	def __init__(self, path):
 		self.path = path
 		self.listOfSets = []
+		self.analyzed = 0
 		self.allowIncomplete = Reader.DEFAULT_ALLOW_INCOMPLETE_PROP_SETS;
 	
 	def allowIncompleteProperties(self, value):
@@ -29,9 +31,13 @@ class Reader(object):
                  self.__readFile()
 
 	def getdata(self):
+		if (0 == self.analyzed):
+			self.analyze()
 		return self.listOfSets
 
         def printdata(self):
+		if (0 == self.analyzed):
+                        self.analyze()
                 print "--- Data structure ---"
                 for propset in self.listOfSets:
                         print propset
@@ -94,3 +100,26 @@ class Reader(object):
 		if (part is not None and 0<len(part) ):
 			return True
 		return False
+
+def main(argv):
+	        inputfile = ''
+                outputfile = ''
+                try:
+                        opts, args = getopt.getopt(argv,"hi:o:",["ifile="])
+                except getopt.GetoptError:
+                        print 'test.py -i <inputfile>'
+                        sys.exit(2)
+                for opt, arg in opts:
+                        if opt == '-h':
+                                print 'test.py -i <inputfile>'
+                                sys.exit()
+                        elif opt in ("-i", "--ifile"):
+                                inputfile = arg
+                print 'Input file is "', inputfile
+                print 'Output file is "', outputfile
+                reader = Reader(inputfile)
+                reader.printdata()
+
+if __name__ == "__main__":
+	main(sys.argv[1:])
+

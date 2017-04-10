@@ -75,7 +75,7 @@ class JsonBuilder(object):
 		if (closeval is not None):
 			self.items.append(Close(closeval))
 		else:
-			print "No Open instances, Close was not appended"
+			print "No open Elements, Close was not appended"
 		return self
 
 	def closeAll(self):
