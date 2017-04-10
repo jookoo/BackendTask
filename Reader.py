@@ -28,7 +28,7 @@ class Reader(object):
         def analyze(self):
                  self.__readFile()
 
-	def retrievedata(self):
+	def getdata(self):
 		return self.listOfSets
 
         def printdata(self):

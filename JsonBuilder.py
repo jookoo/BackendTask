@@ -134,7 +134,7 @@ class JsonBuilder(object):
 				print(item, self.level)
 		self.level = 0
 
-		return x
+		return "[" + x + "]"
 	
 	def __isObjNeed(self):
 		if (0 == len(self.items) or isinstance(self.items[-1], List) or isinstance(self.items[-1], Next)):

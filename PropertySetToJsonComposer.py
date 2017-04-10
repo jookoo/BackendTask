@@ -9,9 +9,16 @@ class PropertySetToJsonComposer(object):
 
                 if (listOfSets is not None and 0 < len(listOfSets)):
                         for propset in listOfSets:
-				builder.keyvalue("name", propset.name).keyvalue("type",propset.type).list("properties")
+				builder.keyvalue("name", propset.name).keyvalue("type", propset.type).list("properties")
 				for prop in propset.properties:
-					builder.objekt().keyvalue("name",prop.name).keyvalue("value",prop.value).keyvalue("type", prop.type).close()
+                                        builder.objekt()
+                                        if (prop.name is not None):
+                                                builder.keyvalue("name", prop.name)
+                                        if (prop.value is not None):
+                                                builder.keyvalue("value", prop.value)
+                                        if (prop.type is not None):
+                                                builder.keyvalue("type", prop.type)
+                                        builder.close()
 				builder.closeAll()
 				
 			print builder.build()
@@ -24,10 +31,19 @@ class PropertySetToJsonComposer(object):
 
                 if (listOfSets is not None and 0 < len(listOfSets)):
 			for propset in listOfSets:
-                                builder.keyvalue("name", propset.name).keyvalue("type",propset.type).list("properties")
+                                builder.objekt().keyvalue("name", propset.name).keyvalue("type", propset.type).list("properties")
                                 for prop in propset.properties:
-                                        builder.objekt().keyvalue("name",prop.name).keyvalue("value",prop.value).keyvalue("type", prop.type).close()
-                                builder.closeAll()
+					for str in prop:
+						builder.objekt()
+        	                                if (str.name is not None):
+                	                                builder.keyvalue("name", str.name)
+                        	                if (str.value is not None):
+                                	                builder.keyvalue("value", str.value)
+                                        	if (str.type is not None):
+                                                	builder.keyvalue("type", str.type)
+                                        	builder.close()
+				builder.close().close()
+                        builder.closeAll()
 
                         content =  builder.build()
 
