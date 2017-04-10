@@ -17,7 +17,6 @@ class PropertySet(object):
 			x = x + "\n" + str(prop)
 		return x
 
-
 class Property(object):
 
 	DEFAULT_TYPE = 'Property'
