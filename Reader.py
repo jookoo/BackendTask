@@ -103,7 +103,6 @@ class Reader(object):
 
 def main(argv):
 	        inputfile = ''
-                outputfile = ''
                 try:
                         opts, args = getopt.getopt(argv,"hi:o:",["ifile="])
                 except getopt.GetoptError:
@@ -116,7 +115,6 @@ def main(argv):
                         elif opt in ("-i", "--ifile"):
                                 inputfile = arg
                 print 'Input file is "', inputfile
-                print 'Output file is "', outputfile
                 reader = Reader(inputfile)
                 reader.printdata()
 
