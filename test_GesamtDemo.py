@@ -2,6 +2,8 @@ import unittest
 
 from Reader import Reader
 from PropertySetToJsonComposer import PropertySetToJsonComposer
+from BackendTask import PropertySet
+from BackendTask import Property
 
 class Test_test_GesamtDemo(unittest.TestCase):
 
@@ -10,7 +12,8 @@ class Test_test_GesamtDemo(unittest.TestCase):
                 a_reader = Reader("./example_input.py")
 		a_reader.analyze()
 		print a_reader.printdata()
-		listOfSets = a_reader.getdata()
+		listOfSets = []
+                listOfSets.append(a_reader.getdata())
 		composer = PropertySetToJsonComposer()
 		composer.doFile(listOfSets, 1, "./demodata/demo_gesamt_pretty.json")
 

@@ -1,6 +1,8 @@
 import os.path
 from PropertyFactory import PropertyFactory
 from JsonBuilder import JsonBuilder
+from BackendTask import PropertySet
+from BackendTask import Property
 
 class PropertySetToJsonComposer(object):
 
@@ -8,19 +10,9 @@ class PropertySetToJsonComposer(object):
                 builder = JsonBuilder(pretty)
 
                 if (listOfSets is not None and 0 < len(listOfSets)):
-                        for propset in listOfSets:
-				builder.keyvalue("name", propset.name).keyvalue("type", propset.type).list("properties")
-				for prop in propset.properties:
-                                        builder.objekt()
-                                        if (prop.name is not None):
-                                                builder.keyvalue("name", prop.name)
-                                        if (prop.value is not None):
-                                                builder.keyvalue("value", prop.value)
-                                        if (prop.type is not None):
-                                                builder.keyvalue("type", prop.type)
-                                        builder.close()
-				builder.closeAll()
-				
+			for propset in listOfSets:
+				self.__do(builder, propset)
+			builder.closeAll() 
 			print builder.build()
 
                 else:
@@ -28,29 +20,65 @@ class PropertySetToJsonComposer(object):
 
 	def doFile(self, listOfSets, pretty, path):
 		builder = JsonBuilder(pretty)
-
                 if (listOfSets is not None and 0 < len(listOfSets)):
 			for propset in listOfSets:
-                                builder.objekt().keyvalue("name", propset.name).keyvalue("type", propset.type).list("properties")
-                                for prop in propset.properties:
-					for str in prop:
-						builder.objekt()
-        	                                if (str.name is not None):
-                	                                builder.keyvalue("name", str.name)
-                        	                if (str.value is not None):
-                                	                builder.keyvalue("value", str.value)
-                                        	if (str.type is not None):
-                                                	builder.keyvalue("type", str.type)
-                                        	builder.close()
-				builder.close().close()
-                        builder.closeAll()
-
+				self.__do(builder, propset)
+			builder.closeAll()
                         content =  builder.build()
 
 			self.__writeFile(path, content)
 
                 else:
                         print "Empty List, did Nothing"
+	
+	def __do(self, builder, propset):
+		if (isinstance(propset, list)):
+                	for pset in propset:
+                        	builder.objekt().keyvalue("name", pset.name).keyvalue("type", pset.type).list("properties")
+                                for prop in pset.properties:
+                                	if (isinstance(prop, list)):
+                                        	for pr in prop:
+                                                	builder.objekt()
+                                                        if (pr.name is not None):
+                                                        	builder.keyvalue("name", pr.name)
+                                                        if (pr.value is not None):
+                                                                builder.keyvalue("value", pr.value)
+                                                        if (pr.type is not None):
+                                                                builder.keyvalue("type", pr.type)
+                                                        builder.close()
+                                        else:
+                                        	builder.objekt()
+                                                if (prop.name is not None):
+                                                	builder.keyvalue("name", prop.name)
+                                                if (prop.value is not None):
+                                                        builder.keyvalue("value", prop.value)
+                                                if (prop.type is not None):
+                                                        builder.keyvalue("type", prop.type)
+                                                builder.close()
+				builder.close().close()
+		else:
+                	builder.objekt().keyvalue("name", propset.name).keyvalue("type", propset.type).list("properties")
+                        for prop in propset.properties:
+                        	if (isinstance(prop, list)):
+                                	for pr in prop:
+                                        	builder.objekt()
+                                                if (pr.name is not None):
+                                                	builder.keyvalue("name", pr.name)
+                                                if (pr.value is not None):
+                                                        builder.keyvalue("value", pr.value)
+                                                if (pr.type is not None):
+                                                        builder.keyvalue("type", pr.type)
+                                                builder.close()
+                                else:
+                                	builder.objekt()
+                                        if (prop.name is not None):
+                                        	builder.keyvalue("name", prop.name)
+                                        if (prop.value is not None):
+                                                builder.keyvalue("value", prop.value)
+                                        if (prop.type is not None):
+                                                builder.keyvalue("type", prop.type)
+                                        builder.close()
+                                builder.close().close()
 
 	def __writeFile(self, path, content):
 		if (path is not None and content is not None):

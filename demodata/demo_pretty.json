@@ -1,4 +1,4 @@
-{
+[{
     "name": "Test Property Set 1",
     "type": "PropertySet",
     "properties": [
@@ -28,4 +28,4 @@
             "type": "Property"
         }
     ]
-}
+}]
