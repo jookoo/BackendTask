@@ -28,7 +28,9 @@ class Reader(object):
                         print ("Incomplete Property Sets allowed = ",value)
 
         def analyze(self):
-                 self.__readFile()
+		self.analyzed = 1
+		self.listOfSets = []
+		self.__readFile()
 
 	def getdata(self):
 		if (0 == self.analyzed):
