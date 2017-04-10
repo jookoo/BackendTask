@@ -1,6 +1,24 @@
 class JsonBuilder(object):
 
 	PRETTY_DIST = 4		
+	
+	OPENER_OBJ_START = "{"
+
+	OPENER_LIST_START = "["
+
+	OPENER_OBJ_END = "}"
+	
+	OPENER_LIST_END = "]"
+
+	VALUE_TAG = "\""
+
+	VALUE_SEPERATOR = ":"
+
+	LINE_FEED = "\n"
+
+	LINE_TAB = "\t"
+
+	SPACE = " "
 
 	def __init__(self, pretty):
 	        self.pretty = pretty
@@ -16,6 +34,9 @@ class JsonBuilder(object):
 
 	def list(self, key):
                 if (self.__isObjNeed()):
+			if (self.__isNextNeed()):
+	                        nxtlevel = self.__findCurrentLevel() - 1
+        	                self.items.append(Next(nxtlevel))
 			level = self.__findAndRaiseCurrentLevel()
                         self.items.append(Obj(level))
                 if (self.__isNextNeed()):
@@ -27,14 +48,21 @@ class JsonBuilder(object):
 
 	def value(self):
 		if (self.__isObjNeed()):
+			if (self.__isNextNeed()):
+                                nxtlevel = self.__findCurrentLevel() - 1
+                                self.items.append(Next(nxtlevel))
 			level = self.__findAndRaiseCurrentLevel()
                         self.items.append(Obj(level))
                 if (self.__isNextNeed()):
                         self.items.append(Next(0))
 		self.items.append(Value(value))
+		return self
 
 	def keyvalue(self, key, value):
 		if (self.__isObjNeed()):
+			if (self.__isNextNeed()):
+                                nxtlevel = self.__findCurrentLevel() - 1
+                                self.items.append(Next(nxtlevel))
 			level = self.__findAndRaiseCurrentLevel()
 			self.items.append(Obj(level))
 		if (self.__isNextNeed()):
@@ -43,22 +71,18 @@ class JsonBuilder(object):
 		return self
 
 	def close(self):
-		if (self.__isObjNeed()):
-			level = self.__findAndRaiseCurrentLevel()
-                        self.items.append(Obj(level))
-		val = ""
-		if (isinstance(self.items[-1], List)):
-			val = "]"
+		closeval = self.__searchLastOpenInstance()
+		if (closeval is not None):
+			self.items.append(Close(closeval))
 		else:
-			val = "}"
-		self.items.append(Close(val))
+			print "No Open instances, Close was not appended"
 		return self
 
 	def closeAll(self):
-		if (self.__isObjNeed()):
-			level = self.__findAndRaiseCurrentLevel()
-                       	self.items.append(Obj(level))
-		self.items.append(CloseAll())
+		closeval = self.__searchLastOpenInstance()
+		while closeval is not None:
+			self.items.append(Close(closeval))
+			closeval = self.__searchLastOpenInstance()
 		return self
 	
 	def build(self):
@@ -69,71 +93,43 @@ class JsonBuilder(object):
 					if (self.pretty):
 						if (0==len(x)):
 	                                                self.level = item.level
-						x = x + "\t".expandtabs(self.level*JsonBuilder.PRETTY_DIST)
-					x = x + "{"
+						x = x + JsonBuilder.LINE_TAB.expandtabs(self.level*JsonBuilder.PRETTY_DIST)
+					x = x + JsonBuilder.OPENER_OBJ_START
 					if(self.pretty):
                                 		self.level = self.level + 1
-			                        x = x + "\n"
+			                        x = x + JsonBuilder.LINE_FEED
 
-
-				if isinstance(item, List):
+				if (isinstance(item, List)):
 					if (self.pretty):
-						x = x + "\t".expandtabs(self.level*JsonBuilder.PRETTY_DIST)
-					x = x + "\"" +  item.key + "\": ["
+						x = x + JsonBuilder.LINE_TAB.expandtabs(self.level*JsonBuilder.PRETTY_DIST)
+					x = x + JsonBuilder.VALUE_TAG +  item.key + JsonBuilder.VALUE_TAG + JsonBuilder.VALUE_SEPERATOR + JsonBuilder.SPACE +  JsonBuilder.OPENER_LIST_START
 					if (self.pretty):
 						self.level = self.level + 1
-                                                x = x + "\n"
+                                                x = x + JsonBuilder.LINE_FEED
 
-				if(isinstance(item, KeyValue)):	
+				if (isinstance(item, KeyValue)):	
 					if (self.pretty):
-                                                x = x + "\t".expandtabs(self.level*JsonBuilder.PRETTY_DIST)
-					x = x + "\"" + item.key + "\": \"" + str(item.value) + "\""
+                                                x = x + JsonBuilder.LINE_TAB.expandtabs(self.level*JsonBuilder.PRETTY_DIST)
+					x = x + JsonBuilder.VALUE_TAG + item.key + JsonBuilder.VALUE_TAG + JsonBuilder.VALUE_SEPERATOR + JsonBuilder.SPACE + JsonBuilder.VALUE_TAG + str(item.value) + JsonBuilder.VALUE_TAG
 
-				if(isinstance(item, Value)):
+				if (isinstance(item, Value)):
                                         if (self.pretty):
-                                                x = x + "\t".expandtabs(self.level*JsonBuilder.PRETTY_DIST)
-                                        x = x + "\"" +  str(item.value) + "\""
+                                                x = x + JsonBuilder.LINE_TAB.expandtabs(self.level*JsonBuilder.PRETTY_DIST)
+                                        x = x + JsonBuilder.VALUE_TAG +  str(item.value) + JsonBuilder.VALUE_TAG
 
 				if (isinstance(item, Close)):
                                         if (self.pretty):
 						self.level = self.level - 1
-					        x = x + "\n"
-						x = x + "\t".expandtabs(self.level*JsonBuilder.PRETTY_DIST)
+					        x = x + JsonBuilder.LINE_FEED
+						x = x + JsonBuilder.LINE_TAB.expandtabs(self.level*JsonBuilder.PRETTY_DIST)
                                 	x = x + item.value
-					if (self.pretty):
-                                                x = x + "\n"
 				
 				if (isinstance(item, Next)):
 					if (self.pretty):
-                                                x = x + "\t".expandtabs(item.level*JsonBuilder.PRETTY_DIST)
+                                                x = x + JsonBuilder.LINE_TAB.expandtabs(item.level*JsonBuilder.PRETTY_DIST)
                                         x = x + item.value
 					if (self.pretty):
-                                                x = x + "\n"
-
-				if (isinstance(item, CloseAll)):
-					ignorenext = 0
-					once = 0
-					for it in reversed(self.items):
-						if (isinstance(it, Close)):
-							ignorenext = ignorenext + 1
-						if (isinstance(it, Obj) or isinstance(it, List)):
-							if (0 < ignorenext):
-								ignorenext = ignorenext - 1
-							else:
-								if (self.pretty):
-									self.level = self.level - 1
-									# Buggy.... noch fixen, reagiert nur auf closeAll am ende
-									if(0 == once and (isinstance(self.items[-2], Value) or isinstance(self.items[-2], KeyValue))):
-										x = x + "\n"
-										once = 1
-									x = x + "\t".expandtabs(self.level*JsonBuilder.PRETTY_DIST)
-	
-								if (isinstance(it, Obj)):
-									x = x + "}"
-								else:
-									x = x + "]"
-								if (self.pretty):
-                                                                        x = x + "\n"
+                                                x = x + JsonBuilder.LINE_FEED
 
 				print(item, self.level)
 		self.level = 0
@@ -143,10 +139,14 @@ class JsonBuilder(object):
 	def __isObjNeed(self):
 		if (0 == len(self.items) or isinstance(self.items[-1], List) or isinstance(self.items[-1], Next)):
 			return 1
+		if (isinstance(self.items[-1], Close)):
+			it = self.__searchLastOpen()
+			if (it is not None and isinstance(it, List)):
+				return 1
 		return 0		
 	
 	def __isNextNeed(self):
-		if (isinstance(self.items[-1], Value) or isinstance(self.items[-1], KeyValue) or isinstance(self.items[-1], Close)):
+		if (0 < len(self.items) and (isinstance(self.items[-1], Value) or isinstance(self.items[-1], KeyValue) or isinstance(self.items[-1], Close))):
 			return 1
 		return 0
 
@@ -164,6 +164,28 @@ class JsonBuilder(object):
 				if (isinstance(item, Close)):
 					level = level - 1
 			return level
+
+	def __searchLastOpenInstance(self):
+		val = None
+		item = self.__searchLastOpen()
+		if (item is not None):
+	                if (isinstance(item, List)):
+        	                val = "]"
+                	else:
+                        	val = "}"
+		return val
+
+	def __searchLastOpen(self):
+		worklist = []
+                for it in self.items:
+                        if (isinstance(it, Obj) or isinstance(it, List)):
+                                worklist.append(it)
+                        if (isinstance(it, Close)):
+                                worklist.pop()
+
+		if (0 < len(worklist)):
+			return worklist[-1] 
+		return None
 
 	def _classtest(self, cls):
 		if(isinstance(cls, KeyValue)):
@@ -204,8 +226,3 @@ class Close(object):
 	
 	def __init__(self, value):
 		self.value = value
-
-class CloseAll(object):
-
-	def __init__(self):
-		self.nothing = 0

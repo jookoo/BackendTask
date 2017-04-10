@@ -48,10 +48,16 @@ class Test_test_JsonBuilder(unittest.TestCase):
                 a_builder.keyvalue("a_key","a_value").keyvalue("b_key","b_value").list("a_list").keyvalue("a_lkey", "alvalue").close().closeAll()
                 print a_builder.build()
 
-	def test_builder_pretty_advanced_multielist_close(self):
+	def test_builder_pretty_advanced_multilist_staged_close(self):
                 print "An advanced Builder Test with KeyValues and Lists and a Close  in prittyprint"
                 a_builder = JsonBuilder(1)
                 a_builder.keyvalue("a_key","a_value").keyvalue("b_key","b_value").list("a_list").keyvalue("a_lkey", "alvalue").close().list("b_list").keyvalue("b_lkey","b_lvalue").closeAll()
+                print a_builder.build()
+
+	def test_builder_pretty_advanced_multilist_two_list_close(self):
+                print "An advanced Builder Test with KeyValues and Lists and a double Close  in prittyprint"
+                a_builder = JsonBuilder(1)
+                a_builder.keyvalue("a_key","a_value").keyvalue("b_key","b_value").list("a_list").keyvalue("a_lkey", "alvalue").close().close().list("b_list").keyvalue("b_lkey","b_lvalue").closeAll()
                 print a_builder.build()
 
 
