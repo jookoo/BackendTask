@@ -6,26 +6,26 @@
             "name": "Width",
             "value": "100",
             "type": "Property"
+        },
+        {
+            "name": "Height",
+            "value": "100",
+            "type": "Property"
+        },
+        {
+            "name": "ThermalTransmittance",
+            "value": "0.9",
+            "type": "Property"
+        },
+        {
+            "name": "FireResistance",
+            "value": "Class 4",
+            "type": "Property"
+        },
+        {
+            "name": "WindLoadRating",
+            "value": "Class 3",
+            "type": "Property"
         }
     ]
-},
-{
-    "name": "Height",
-    "value": "100",
-    "type": "Property"
-},
-{
-    "name": "ThermalTransmittance",
-    "value": "0.9",
-    "type": "Property"
-},
-{
-    "name": "FireResistance",
-    "value": "Class 4",
-    "type": "Property"
-},
-{
-    "name": "WindLoadRating",
-    "value": "Class 3",
-    "type": "Property"
 }]

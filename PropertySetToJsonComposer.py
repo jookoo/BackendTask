@@ -78,7 +78,7 @@ class PropertySetToJsonComposer(object):
                                         if (prop.type is not None):
                                                 builder.keyvalue("type", prop.type)
                                         builder.close()
-                                builder.close().close()
+                        builder.close().close()
 
 	def __writeFile(self, path, content):
 		if (path is not None and content is not None):
