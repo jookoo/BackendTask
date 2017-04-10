@@ -2,8 +2,6 @@ import unittest
 
 from Reader import Reader
 from PropertySetToJsonComposer import PropertySetToJsonComposer
-from BackendTask import PropertySet
-from BackendTask import Property
 
 class Test_test_GesamtDemo(unittest.TestCase):
 
