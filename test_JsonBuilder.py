@@ -76,8 +76,23 @@ class Test_test_JsonBuilder(unittest.TestCase):
                 self.assertEquals('[{\n    "a_key": "a_value",\n    "b_key": "b_value",\n    "a_list": [\n        {\n            "a_lkey": "alvalue"\n        }\n    ],\n    "b_list": [\n        {\n            "b_lkey": "b_lvalue"\n        }\n    ]\n}]', x)
                 print x
 
+	def test_builder_empty(self):
+		print "A Builder Test with no Elements"
+		a_builder = JsonBuilder(0)
+		x = a_builder.build()
+		self.assertEquals('[]', x)
+		print x
+
+	def test_builder_close_only(self):
+                print "A Builder Test with Close-Elements only"
+                a_builder = JsonBuilder(0)
+                a_builder.close().close().close()
+                x = a_builder.build()
+                print x
 
 if __name__ == '__main__':
     unittest.main()
+
+
 
 

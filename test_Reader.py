@@ -33,8 +33,18 @@ class Test_test_Reader(unittest.TestCase):
 		for index in range(len(a_reader.listOfSets)):
                         propset = a_reader.listOfSets[index]
                         self.assertEquals(len(propset.properties), 5)
+	
+	def test_reader_broken_input(self):
+                print "Test zur bei fehlender Input-Datei"
+                a_reader = Reader("./example_not_existent.py")
+                a_reader.analyze()
+                a_reader.printdata()
 
-		
+	def test_reader_broken_input(self):
+                print "Test zur Darstellung einer korrupten Input-Date"
+                a_reader = Reader("./example_input_broken.py")
+                a_reader.analyze()
+                a_reader.printdata()
 	
 if __name__ == '__main__':
     unittest.main()

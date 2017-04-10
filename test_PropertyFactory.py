@@ -19,6 +19,12 @@ class Test_test_PropertyFactory(unittest.TestCase):
 			self.assertEquals(prop.value, "100")
 			self.assertEquals(prop.type, "Property")
 
+	def test_factory_property_create_corrupt(self):
+                print "Test zur Erstellung eines Propertyobjekts mit korrupten Daten"
+                factory = PropertyFactory(0);
+                keyValues = {"":"Property", "name": "", "valu": '100'}
+                properties = factory.createProps(keyValues)
+
 if __name__ == '__main__':
     unittest.main()
 

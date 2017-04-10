@@ -67,6 +67,10 @@ class Test_test_PropertyToJsonComposer(unittest.TestCase):
                 self.assertEquals("500fa32457f264fc2e32129b31f7e944", actual)
                 #self.assertEquals(a_builder.pretty, 1)
 
+	def test_composer_doPrint_empty(self):
+		print "DoPrint Test mit leeren Daten"
+		a_composer = PropertySetToJsonComposer()
+		a_composer.doPrint(None, 0)
 
 
 if __name__ == '__main__':
