@@ -8,13 +8,17 @@ class Reader(object):
 
 	RGX_ONE_LINE = "('[a-zA-Z0-9_ {}\":,\.[\]]+')"
 
-	RGX_SPLIT_SET_FROM_PROPS = ":\s+\["
+	RGX_SPLIT_SET_FROM_PROPS = ":\s*\["
 
 	RGX_SPLIT_PROPS = "({[\":,\s\w\d.\d]+})"
 
 	RGX_KEY_VALUE = "(\"(\w+)\":\s*(\"[a-zA-Z0-9 ]+\"|\d+.{0,1}\d+))"
 
 	DEFAULT_ALLOW_INCOMPLETE_PROP_SETS = 0 
+
+	CHARS_OUTTER = '\.\[\]{}\w\d",:"{,2}\''
+	
+	CHARS_INNER = '\w\d\s\.'
 
 	def __init__(self, path):
 		self.path = path
@@ -56,9 +60,13 @@ class Reader(object):
                         print("File not readable", self.path)
 
 	def __readLine(self, part):
-		partclean = part.strip()
-		p = re.compile(Reader.RGX_ONE_LINE)
-		m = p.match(partclean)
+		m = None
+		if (self.__notNoneOrEmpty(part)):
+			partc = self.__removeCharMoreThanTwice(part)
+			partc = self.__removeSChars(self.CHARS_OUTTER,partc)
+			partclean = partc.strip()
+			p = re.compile(Reader.RGX_ONE_LINE)
+			m = p.match(partclean)
 		return m
 
 	def __readListOrKeyValue(self, part):
@@ -90,9 +98,9 @@ class Reader(object):
 			partclean = part.strip()
 			p = re.compile(Reader.RGX_KEY_VALUE)
 			for m in p.finditer(partclean):
-				if (m is not None  and 0< len(m.groups())):
-					key = m.group(2)
-					value = m.group(3)
+				if (m is not None  and 0 < len(m.groups())):
+					key = self.__removeSChars(self.CHARS_INNER, m.group(2))
+					value = self.__removeSChars(self.CHARS_INNER, m.group(3))
 					keyValues[key]=value
 		else:
 			print "Text null or empty"
@@ -102,6 +110,13 @@ class Reader(object):
 		if (part is not None and 0<len(part) ):
 			return True
 		return False
+
+	def __removeCharMoreThanTwice(self, part):
+		pattern = re.compile(r"(.)\1{2,}", re.DOTALL) 
+		return pattern.sub(r"\1\1", part)
+	
+	def __removeSChars(self,pattern, part):
+		return ''.join(re.sub('[^' + pattern + ']', '' , part))
 
 def main(argv):
 	        inputfile = ''

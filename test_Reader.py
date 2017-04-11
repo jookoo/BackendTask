@@ -41,10 +41,17 @@ class Test_test_Reader(unittest.TestCase):
                 a_reader.printdata()
 
 	def test_reader_broken_input(self):
-                print "Test zur Darstellung einer korrupten Input-Date"
+                print "Test zur Darstellung einer korrupten Input-Datei"
                 a_reader = Reader("./example_input_broken.py")
                 a_reader.analyze()
                 a_reader.printdata()
+
+	def test_reader_broken_input_specialchars(self):
+                print "Test zur Darstellung einer korrupten Input-Datei mit Sonderzeichen und Escape-Chars"
+                a_reader = Reader("./example_input_broken_specialchars.py")
+                a_reader.analyze()
+                a_reader.printdata()
+
 	
 if __name__ == '__main__':
     unittest.main()
