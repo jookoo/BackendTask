@@ -16,7 +16,7 @@ class Reader(object):
 
 	DEFAULT_ALLOW_INCOMPLETE_PROP_SETS = 0 
 
-	CHARS_OUTTER = '\.\[\]{}\w\d",:"{,2}\''
+	CHARS_OUTTER = '\.\[\]{}\w\s\d",:"{,2}\''
 	
 	CHARS_INNER = '\w\d\s\.'
 
